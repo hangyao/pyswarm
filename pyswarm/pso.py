@@ -17,7 +17,7 @@ def _cons_f_ieqcons_wrapper(f_ieqcons, args, kwargs, x):
     return np.array(f_ieqcons(x, *args, **kwargs))
     
 def pso(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={}, 
-        swarmsize=100, omega=0.5, phip=0.5, phig=0.5, maxiter=100, 
+        swarmsize=100, omega=0.729, phip=1.49445, phig=1.49445, maxiter=100, 
         minstep=1e-8, minfunc=1e-8, debug=False, processes=1,
         particle_output=False):
     """
@@ -168,6 +168,13 @@ def pso(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
     while it <= maxiter:
         rp = np.random.uniform(size=(S, D))
         rg = np.random.uniform(size=(S, D))
+        
+        # Add varying inertia weight (by Chris Y.)
+        if np.amax(v) < 2.5:
+            omega = omega
+        else:
+            omega = 0.8 * omega
+        # End
 
         # Update the particles velocities
         v = omega*v + phip*rp*(p - x) + phig*rg*(g - x)
