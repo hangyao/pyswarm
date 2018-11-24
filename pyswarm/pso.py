@@ -127,7 +127,7 @@ def pso(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
     # Initialize the particle swarm ############################################
     S = swarmsize
     D = len(lb)  # the number of dimensions each particle has
-    x = np.random.rand(S, D)  # particle positions
+#     x = np.random.rand(S, D)  # particle positions
     v = np.zeros_like(x)  # particle velocities
     p = np.zeros_like(x)  # best particle positions
     fx = np.zeros(S)  # current particle function values
@@ -139,8 +139,10 @@ def pso(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
     
     # Initialize the particle's position
     if init_vals:
-        x = init_vals
+        x = np.random.randn(S, D)
+        x = init_vals + (1+x/1e3)*init_vals
     else:
+        x = np.random.rand(S, D)  # particle positions
         x = lb + x*(ub - lb)
 
     # Calculate objective and constraints for each particle
