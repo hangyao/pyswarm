@@ -19,7 +19,7 @@ def _cons_f_ieqcons_wrapper(f_ieqcons, args, kwargs, x):
 def pso(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={}, 
         swarmsize=100, omega=0.729, phip=1.49445, phig=1.49445, maxiter=100, 
         minstep=1e-8, minfunc=1e-8, debug=False, processes=1,
-        particle_output=False):
+        particle_output=False, init_vals=None):
     """
     Perform a particle swarm optimization (PSO)
    
@@ -93,6 +93,9 @@ def pso(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
     lb = np.array(lb)
     ub = np.array(ub)
     assert np.all(ub>lb), 'All upper-bound values must be greater than lower-bound values'
+    
+    if init_vals:
+        assert len(init_vals)==len(lb), 'Initial values and bounds must be the same length'
    
     vhigh = np.abs(ub - lb)
     vlow = -vhigh
@@ -133,8 +136,12 @@ def pso(func, lb, ub, ieqcons=[], f_ieqcons=None, args=(), kwargs={},
     g = []  # best swarm position
     fg = np.inf  # best swarm position starting value
     
+    
     # Initialize the particle's position
-    x = lb + x*(ub - lb)
+    if init_vals:
+        x = init_vals
+    else:
+        x = lb + x*(ub - lb)
 
     # Calculate objective and constraints for each particle
     if processes > 1:
